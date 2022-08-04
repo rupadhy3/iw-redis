@@ -80,6 +80,9 @@ else
    oc create secret docker-registry --docker-server=$acruserlower.azurecr.io --docker-username=$acruserupper --docker-password=$acrpas acr-pull-secret -n $NSNAME
 fi
 
+### Link the acr pull secret with default service account
+oc secrets link default acr-pull-secret --for=pull -n $NSNAME
+
 #Need to execute below patch command on your deployment after executing this script and before executing ns2.sh
 #oc -n n patch deployment/<yourdeploymentname> -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject": "true"}}}}}'
 

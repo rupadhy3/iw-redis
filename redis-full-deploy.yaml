@@ -93,8 +93,8 @@ spec:
       - name: redis-data
         persistentVolumeClaim:
           claimName: redis-data
-      imagePullSecrets:
-      - name: acr-pull-secret
+#      imagePullSecrets:
+#      - name: acr-pull-secret
 ---
 apiVersion: v1
 kind: Service
