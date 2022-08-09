@@ -31,13 +31,13 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: redis-stack-test
-    app.kubernetes.io/component: redis-stack-test
-    app.kubernetes.io/instance: redis-stack-test
-    app.kubernetes.io/name: redis-stack-test
-    app.kubernetes.io/part-of: redis-stack-app-test
+    app: redis-stack
+    app.kubernetes.io/component: redis-stack
+    app.kubernetes.io/instance: redis-stack
+    app.kubernetes.io/name: redis-stack
+    app.kubernetes.io/part-of: redis-stack-app
     app.openshift.io/runtime-namespace: NSNAME
-  name: redis-stack-test
+  name: redis-stack
   namespace: NSNAME
 spec:
   progressDeadlineSeconds: 600
@@ -45,7 +45,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: redis-stack-test
+      app: redis-stack
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -55,13 +55,13 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: redis-stack-test
-        deploymentconfig: redis-stack-test
+        app: redis-stack
+        deploymentconfig: redis-stack
     spec:
       containers:
       - image: IMAGETOUSE
         imagePullPolicy: IfNotPresent
-        name: redis-stack-test
+        name: redis-stack
         ports:
         - containerPort: 6379
           protocol: TCP
