@@ -7,8 +7,8 @@ NOW=$(date +%d%m%Y%H%M%S)
 mkdir -p /tmp/my-$NOW
 BDIR="/tmp/my-$NOW"
 
-acruser=$(az keyvault secret show --name acrUser --vault-name=$kvname)
-acrpas=$(az keyvault secret show --name acrPasswd --vault-name=$kvname)
+acruser=$(az keyvault secret show --name acrUser --vault-name=$kvname --query=value |sed "s/\"//g")
+acrpas=$(az keyvault secret show --name acrPasswd --vault-name=$kvname --query=value |sed "s/\"//g")
 
 ### Function usage
 usage() {
