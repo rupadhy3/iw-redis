@@ -153,3 +153,52 @@ spec:
       - name: mqtt-data
         persistentVolumeClaim:
           claimName: mosquitto-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: mosquitto-eclipse-tcp
+  namespace: NSNAME
+spec:
+  ports:
+  - port: 1883
+    protocol: TCP
+    targetPort: 1883
+  selector:
+    app: mqtt-eclipse
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: mosquitto-eclipse-tls
+  namespace: NSNAME
+spec:
+  ports:
+  - port: 8883
+    protocol: TCP
+    targetPort: 8883
+  selector:
+    app: mqtt-eclipse
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  name: mosquitto-eclipse-tls
+  namespace: NSNAME
+spec:
+  port:
+    targetPort: 8883
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: mosquitto-eclipse-tls
+    weight: 100
+  wildcardPolicy: None
