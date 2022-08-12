@@ -1,0 +1,155 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  name: mosquitto-pvc
+  namespace: NSNAME
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2G
+  storageClassName: azure-file-sc
+  volumeMode: Filesystem
+---
+apiVersion: v1
+data:
+  passwd: |
+    admin:$6$E+e2qmB88vVGKiGa$DBeH67dAb0Iz37vpyt/M/UssM2zT5PWyvI/Of345m9BjWORvy0qUrkXW3VsugYeXDYiQpI6msAj6UkyQC5h1sw==
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mosquitto-pwd
+  namespace: NSNAME
+---
+apiVersion: v1
+data:
+  mosquitto.conf: |
+    listener 1883
+    password_file /config/auth/passwd
+    listener 8883
+    certfile /config/cert/tls-cert
+    #cafile /myuser/cert/new-ca.crt
+    keyfile /config/cert/tls-key
+    log_type all
+    log_dest topic
+    plugin /usr/lib/mosquitto_dynamic_security.so
+    plugin_opt_config_file /mqttdata/dynamic-security.json
+    per_listener_settings false
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mosquitto-conf
+  namespace: NSNAME
+---
+apiVersion: v1
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN4ekNDQWE4Q0ZIVFFrMXhqUmlreWFJL3g2RUlrSUdnNWlYS0RNQTBHQ1NxR1NJYjNEUUVCQ3dVQU1COHgKRHpBTkJnTlZCQW9NQm1sM0xXMXBjREVNTUFvR0ExVUVBd3dEWTI5dE1CNFhEVEl5TURZeU9URXlNVFl6TUZvWApEVE15TURZeU5qRXlNVFl6TUZvd0lURVJNQThHQTFVRUNnd0lhWGN0Yldsd0xURXhEREFLQmdOVkJBTU1BMk52CmJUQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQU9heXdTTkJVdVptRkt3bngrR1MKeVc2aVhIRHpVRVovL0N6WGhIbjk2bzlVVmRTZUJZdTNVdWxFNnkvUnBqeVQ1SmcwUitLa1R0MngwRy9vVVJ1cQpvN1F0YjZpSjRSK2cwaWFlN3JpRldTY0hJQWs1RVpJalJFUEptVGsvKzQ0WjM3VnRKdHcrdXg1YUE3WXVCOVJ1Cm8zb2hESDg2b21FK2J3QjAyU2lKVXZjSGhiRHIvRDBmU3RKa09WaWRDbWJpbFp3cjFSVEpaWFZjekdnTm1GNVUKUnNqUWRUTFArQjRySlpOM3ZJZ0U2bkVWdnhldVI0a3dBYUJad2IyNjFIWXdDemdUZUlqTDlmTTRhR3pSeHNUcgpZK3c5cTI2bVhYalh0b1VLdVJ0NkJKMG1wQTFUVmpueTFRbSt3VkJlbTUzRnlzZUFEQzBwbExzcmhvR2lUV2QrCk9IVUNBd0VBQVRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQTNSTEhFZGlmbEZ2R0lqemg3ejdTYzB3R0tLSzQKeG1IUHBqZ3lQUW1TZE9kbmdDeGRiSGZJUXFsVXJMdTg3Q1NCMEpKSnFIWnBBRG1ndW9JdkZGVUM5V0lhOWNJTQpQekxMdjd2Y1VscDZJUXdnSWtSRFRla00wZVNXVUJlTkRHMC9mdkR3bGwxRmxCTW9iZy81MUg5MTJyR01wQkN1ClkwOHo3V2FPdkRZWUNxaHVGVFMvVG5RK0JYdTByV3V3eVZuY24xOHo3Zm9VMHlpQUJPc3dPa2dKcnM4M0hmM3UKbnpzemZKa0xDTjZTUnpqUzVZVG13L05YU3g5SWlpeURTMm5RNlhydTF0YnBDT09VaXg1Q0EyOHd2MUhDdC9PTwpSZDd0N2tPN0RmcVQvQTFtQTBHczNoZlZRc1dnTUlQa2FEeUtLbkFqdFl1eW94UnY4Y3B1WVRkT1ZRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBNXJMQkkwRlM1bVlVckNmSDRaTEpicUpjY1BOUVJuLzhMTmVFZWYzcWoxUlYxSjRGCmk3ZFM2VVRyTDlHbVBKUGttRFJINHFSTzNiSFFiK2hSRzZxanRDMXZxSW5oSDZEU0pwN3V1SVZaSndjZ0NUa1IKa2lORVE4bVpPVC83amhuZnRXMG0zRDY3SGxvRHRpNEgxRzZqZWlFTWZ6cWlZVDV2QUhUWktJbFM5d2VGc092OApQUjlLMG1RNVdKMEtadUtWbkN2VkZNbGxkVnpNYUEyWVhsUkd5TkIxTXMvNEhpc2xrM2U4aUFUcWNSVy9GNjVICmlUQUJvRm5CdmJyVWRqQUxPQk40aU12MTh6aG9iTkhHeE90ajdEMnJicVpkZU5lMmhRcTVHM29FblNha0RWTlcKT2ZMVkNiN0JVRjZibmNYS3g0QU1MU21VdXl1R2dhSk5aMzQ0ZFFJREFRQUJBb0lCQUFKYTNzZmFXZHRLUFhuSQphaXp1VDZvV2REVWU5cm5SZ3FSK2lyYW9GZVhpcVlHakgxRmV6TFRlNUR1M3V5ZXhKc3M2OVdUbDRudzIzWGJXCiswVDZCL1BGNXZia2VXeldPbTcwZm1GWjB5QW4zWGJhbzBoSG5lSEhSQTRtamczVVM4bFJWTzA0b3JaYm11QVkKTmpJLzh1RkRSeHBoWWRqMlJ6SE0vNDUvWUY1dkswTFJjRUszSFFJdHV4UWRVTUhUYUo1RldMTzdneDZvUlQ3OAp4RmVlOUpiNW81cHJaTWRRTW5DZm92SHp3NWU1TWhWdmF5a242aU1oTjg1WWdkWjd5clVPVGR5ajhtVlB2OGcxCkhvTWo1Tm5UZU9qYnpvTno5VlVUSGRWdWVHQ0J0OUdxVkxLZzByUW9XSlNCbDR2ZkdsN3UwOURMVEVvQkdRNXYKeWNDbDNQMENnWUVBOTZVM1pPSEJCOEJieDdVaUJsRGRVN21RRXcvSUJWZXlEd2RoOFJ4VWU2cFlOY0IramZzZQpHQjlqYXJrbTdwWjcvM3VnYXovcXBuK0tQb1BRdStqcHBUck5RNXFYQjg2dlBXRXdYc3MvL0FqYkllK25aYU9wCjNIQks3d2pvU3ozVG9kSFp2YW8xREFhaitTMTZaMXlEdjJkenJUaHJ4b3FlT0RBOFJpQTB1RThDZ1lFQTduc3MKdDNFSmFzRmtMeDFtQk13YWhEVkcwVXUzTWlHNkZVcDRvaUtCMFVTbDhpQnVDZEdOdUpKSHd0bXhZdnhiRU4vNQp1K3hCYXN6Zk9ld2RUVnpSblNhWTVKZk1jeld6T1pwbWxXbWlPYkdEN2dKYmJmbTc1ckk3em5ScUFDeGszbitICi80Tk1BZ2sxU1NaRS8wVTRBS1dkNE5La0lxUlpuNTdCYVhTV2pmc0NnWUJKZnZVVHNaUlNNcHFLaUkxU2hvbEoKSWRkS2NQS1I4MWJhOHZ2MFRNNGQ3WTVFVlo2NWtIOTc5VVRTRmFVaVJmTUMvYk84WUxuSk5DelpKTkc4RXdIVQprY0Q5Z1ZHMWRYZTRwYkZ2VUs3cW84NDFJaVR5RzBKOE02OXBoYUU3UTF3ZHVHUUEwQlR5UHI1SFkySGlieWlDCms3ZFcvMW10RU5Lb0psaWREMDNXTFFLQmdFS3FEQVg3Z3paa2VTenlldUk4YSswcE4zS3FSN3VyMGVqQnVKY2EKTGsvaGNNSU9iclF2Ny8zNFpqY0J3NlI0QnJ6ZzMxNjQzRkNPbEpnTWVPUjNYZUVnT1AwdHNlbEN5YWNBa2t5UwpDdGMxMkR0Z1RVNmcwUFhjUFB1cGJ6ZzlNTFZCMFRLTDhXTmdUNVR6TGJadUV3bWJRbGJtaXh0ajllbTQ1emdqCmJ6S2hBb0dBUnNXY3krOW5BcWtGL2tRSlZ1RU8zRm1ZU29TMGd1ZTJ1ZzJYcmpOOVZtYVFtYzRkeVY3L01vQWwKbkFNOEZCdHpINldEVTR4Y2ZZWjRkSEliYkUzeFlxb3ZtNHJEVm1mTXFHUG9nOXF3ZDcxeWNkTCtxSmhxUFlacQpJRW15L1JGTmZxUlNFdUpxV2c5R0VlYXRRZWxQYXBZWW1sY2xBbVpJQmU5dE9vU1dPV3c9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: mosquitto-cert
+  namespace: NSNAME
+type: kubernetes.io/tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mqtt-eclipse
+  name: mosquitto-eclipse
+  namespace: NSNAME
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: mqtt-eclipse
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mqtt-eclipse
+    spec:
+      containers:
+      - image: iwazumipnpdacr002.azurecr.io/openshift/eclipse-mosquitto:v1
+        imagePullPolicy: Always
+        name: mosquitto-eclipse
+        ports:
+        - containerPort: 1883
+          name: default
+          protocol: TCP
+        - containerPort: 8883
+          name: websocket
+          protocol: TCP
+        resources:
+          limits:
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /mosquitto/config
+          name: config-vol
+        - mountPath: /config/cert
+          name: config-vol-cert
+        - mountPath: /config/auth
+          name: config-vol-pwd
+        - mountPath: /mqttdata
+          name: mqtt-data
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - args:
+        - -c
+        - mosquitto_ctrl dynsec init /jsondata/dynamic-security.json admin-user test@1234
+        command:
+        - /bin/sh
+        image: iwazumipnpdacr002.azurecr.io/openshift/eclipse-mosquitto:v1
+        imagePullPolicy: IfNotPresent
+        name: mosquitto-eclipse-init
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /jsondata
+          name: mqtt-data
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: mosquitto.conf
+            path: mosquitto.conf
+          name: mosquitto-conf
+        name: config-vol
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: passwd
+            path: passwd
+          name: mosquitto-pwd
+        name: config-vol-pwd
+      - name: config-vol-cert
+        secret:
+          defaultMode: 420
+          items:
+          - key: tls.crt
+            path: tls-cert
+          - key: tls.key
+            path: tls-key
+          secretName: mosquitto-cert
+      - name: mqtt-data
+        persistentVolumeClaim:
+          claimName: mosquitto-pvc
